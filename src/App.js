@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navigation from "./components/Navigation/Navigation";
 import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
+import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
+import NoImage from "./components/NoImage/NoImage";
 import ParticlesBg from "particles-bg";
 import "./App.css";
 
@@ -10,8 +12,9 @@ function App() {
   const [searchBoxChange, setSearchBoxChange] = useState("");
 
   const onSearchChange = (event) => {
-    console.log("this is the event: ", event.target.value);
+    //console.log("this is the event: ", event.target.value);
     setSearchBoxChange(event.target.value);
+    console.log("Tiene texto: ", event.target.value);
   };
 
   const setUpAPI = (imgURL) => {
@@ -55,7 +58,7 @@ function App() {
   const onButtonSubmit = () => {
     console.log("Click");
     fetch(
-      "https://api.clarifai.com/v2/models/" + "face-detection" + "/outputs",
+      "https://api.clarifai.com/v2/models/face-detection/outputs",
       setUpAPI(searchBoxChange)
     )
       .then((response) => response.json())
@@ -72,7 +75,7 @@ function App() {
         onSearchChange={onSearchChange}
         onButtonSubmit={onButtonSubmit}
       />
-      {/*<FaceRecognition/>*/}
+      <FaceRecognition imgURL={searchBoxChange} />
     </>
   );
 }
