@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-//import Signin from "./components/Signin/Signin";
+import Signin from "./components/Signin/Signin";
 import Navigation from "./components/Navigation/Navigation";
 import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
@@ -7,10 +7,14 @@ import Rank from "./components/Rank/Rank";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import ParticlesBg from "particles-bg";
 import "./App.css";
+import Register from "./components/Register/Register";
 
 function App() {
+  //States
   const [searchBoxChange, setSearchBoxChange] = useState("");
   const [box, setBox] = useState({});
+  const [route, setRoute] = useState("signin");
+  const [isSignIn, setIsSignIn] = useState(false);
 
   /*
    leftCol: 0,
@@ -19,6 +23,7 @@ function App() {
     bottomRow: 0,
   */
 
+  //Events
   const onSearchChange = (event) => {
     //console.log("this is the event: ", event.target.value);
     setSearchBoxChange(event.target.value);
@@ -83,6 +88,7 @@ function App() {
     return requestOptions;
   };
 
+  //Events
   const onButtonSubmit = () => {
     console.log("Click");
     fetch(
@@ -96,18 +102,42 @@ function App() {
       })
       .catch((error) => console.log("error", error));
   };
+
+  const onRouteChange = (route) => {
+    if (route === "signout") {
+      setIsSignIn(false);
+    } else if (route === "home") {
+      setIsSignIn("true");
+    }
+    setRoute(route);
+  };
   return (
     <>
-      {/* {<Signin />} */}
       <ParticlesBg type="cobweb" bg={true} />
-      <Navigation />
-      <Logo />
-      <Rank />
-      <ImageLinkForm
-        onSearchChange={onSearchChange}
-        onButtonSubmit={onButtonSubmit}
-      />
-      <FaceRecognition box={box} imgURL={searchBoxChange} />
+      <Navigation isSignIn={isSignIn} onRouteChange={onRouteChange} />
+      {route === "home" ? (
+        <>
+          <Logo />
+          <Rank />
+          <ImageLinkForm
+            onSearchChange={onSearchChange}
+            onButtonSubmit={onButtonSubmit}
+          />
+          <FaceRecognition box={box} imgURL={searchBoxChange} />
+        </>
+      ) : route === "signin" ? (
+        <>
+          <Signin onRouteChange={onRouteChange} />
+        </>
+      ) : route === "signout" ? (
+        <>
+          <Signin onRouteChange={onRouteChange} />
+        </>
+      ) : (
+        <>
+          <Register onRouteChange={onRouteChange} />
+        </>
+      )}
     </>
   );
 }
