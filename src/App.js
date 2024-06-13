@@ -15,13 +15,23 @@ function App() {
   const [box, setBox] = useState({});
   const [route, setRoute] = useState("signin");
   const [isSignIn, setIsSignIn] = useState(false);
+  const [user, setUser] = useState({
+    id: "",
+    name: "",
+    email: "",
+    entries: 0,
+    joined: "",
+  });
 
-  /*
-   leftCol: 0,
-    topRow: 0,
-    rightCol: 0,
-    bottomRow: 0,
-  */
+  const loadUser = (dataUser) => {
+    setUser({
+      id: dataUser.id,
+      name: dataUser.name,
+      email: dataUser.email,
+      entries: dataUser.entries,
+      joined: dataUser.joined,
+    });
+  };
 
   //Events
   const onSearchChange = (event) => {
@@ -90,14 +100,31 @@ function App() {
 
   //Events
   const onButtonSubmit = () => {
-    console.log("Click");
+    if (!user.id) {
+      console.error("No user ID found");
+      return;
+    }
     fetch(
       "https://api.clarifai.com/v2/models/face-detection/outputs",
       setUpAPI(searchBoxChange)
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log("This is the result: ", result);
+        if (result) {
+          fetch("http://localhost:3001/image", {
+            method: "put",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: user.id,
+            }),
+          })
+            .then((response) => response.json())
+            .then((count) => {
+              setUser({ ...user, entries: count });
+            });
+        }
         displayBox(calculateFaceLocation(result));
       })
       .catch((error) => console.log("error", error));
@@ -118,7 +145,7 @@ function App() {
       {route === "home" ? (
         <>
           <Logo />
-          <Rank />
+          <Rank user={user} />
           <ImageLinkForm
             onSearchChange={onSearchChange}
             onButtonSubmit={onButtonSubmit}
@@ -127,7 +154,7 @@ function App() {
         </>
       ) : route === "signin" ? (
         <>
-          <Signin onRouteChange={onRouteChange} />
+          <Signin loadUser={loadUser} onRouteChange={onRouteChange} />
         </>
       ) : route === "signout" ? (
         <>
@@ -135,7 +162,7 @@ function App() {
         </>
       ) : (
         <>
-          <Register onRouteChange={onRouteChange} />
+          <Register loadUser={loadUser} onRouteChange={onRouteChange} />
         </>
       )}
     </>
