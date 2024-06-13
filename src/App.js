@@ -41,8 +41,7 @@ function App() {
   };
 
   const calculateFaceLocation = (data) => {
-    const clarifaiFace =
-      data.outputs[0].data.regions[0].region_info.bounding_box;
+    const clarifaiFace = data[0].region_info.bounding_box;
     const image = document.getElementById("inputimage");
     const width = Number(image.width);
     const height = Number(image.height);
@@ -60,7 +59,7 @@ function App() {
     setBox(box);
   };
 
-  const setUpAPI = (imgURL) => {
+  /*const setUpAPI = (imgURL) => {
     const PAT = "e567fefd866e4540b59318a28f099c0b";
     // Specify the correct user_id/app_id pairings
     // Since you're making inferences outside your app's scope
@@ -96,7 +95,7 @@ function App() {
     };
 
     return requestOptions;
-  };
+  };*/
 
   //Events
   const onButtonSubmit = () => {
@@ -104,10 +103,15 @@ function App() {
       console.error("No user ID found");
       return;
     }
-    fetch(
-      "https://api.clarifai.com/v2/models/face-detection/outputs",
-      setUpAPI(searchBoxChange)
-    )
+    fetch("http://localhost:3001/imageURL", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        imgURL: searchBoxChange,
+      }),
+    })
       .then((response) => response.json())
       .then((result) => {
         if (result) {
@@ -132,7 +136,16 @@ function App() {
 
   const onRouteChange = (route) => {
     if (route === "signout") {
+      setSearchBoxChange("");
+      setBox({});
       setIsSignIn(false);
+      setUser({
+        id: "",
+        name: "",
+        email: "",
+        entries: 0,
+        joined: "",
+      });
     } else if (route === "home") {
       setIsSignIn("true");
     }
@@ -158,7 +171,7 @@ function App() {
         </>
       ) : route === "signout" ? (
         <>
-          <Signin onRouteChange={onRouteChange} />
+          <Signin loadUser={loadUser} onRouteChange={onRouteChange} />
         </>
       ) : (
         <>

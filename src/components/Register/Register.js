@@ -43,7 +43,7 @@ const Register = ({ onRouteChange, loadUser }) => {
       })
       .then((user) => {
         console.log(user);
-        if (user) {
+        if (user.id) {
           loadUser(user);
           onRouteChange("home");
         }
