@@ -103,7 +103,7 @@ function App() {
       console.error("No user ID found");
       return;
     }
-    fetch("http://localhost:3001/imageURL", {
+    fetch("https://smart-brain-api-2li6.onrender.com/imageURL", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -115,7 +115,7 @@ function App() {
       .then((response) => response.json())
       .then((result) => {
         if (result) {
-          fetch("http://localhost:3001/image", {
+          fetch("https://smart-brain-api-2li6.onrender.com/image", {
             method: "put",
             headers: {
               "Content-Type": "application/json",

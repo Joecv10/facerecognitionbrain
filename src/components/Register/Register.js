@@ -23,7 +23,7 @@ const Register = ({ onRouteChange, loadUser }) => {
   };
 
   const onSubmitSignIn = () => {
-    fetch("http://localhost:3001/register", {
+    fetch("https://smart-brain-api-2li6.onrender.com/register", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
